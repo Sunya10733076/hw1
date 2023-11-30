@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+int largestRectangleArea(int heights[], int size) {
+    int stack[size];
+    int top = -1;
+    int max_area = 0;
+    int i = 0;
+
+    while (i < size) {
+        if (top == -1 || heights[i] >= heights[stack[top]]) {
+            stack[++top] = i++;
+        } else {
+            int top_of_stack = stack[top--];
+            int width = (top == -1) ? i : i - stack[top] - 1;
+            int area = heights[top_of_stack] * width;
+            if (area > max_area) {
+                max_area = area;
+            }
+        }
+    }
+
+    while (top != -1) {
+        int top_of_stack = stack[top--];
+        int width = (top == -1) ? i : i - stack[top] - 1;
+        int area = heights[top_of_stack] * width;
+        if (area > max_area) {
+            max_area = area;
+        }
+    }
+
+    return max_area;
+}
+
+int main() {
+    int n;
+    printf("Enter the number of input records: ");
+    scanf("%d", &n);
+    
+    int heights[n];
+    printf("Enter the heights separated by space: ");
+    for (int i = 0; i < n; ++i) {
+        scanf("%d", &heights[i]);
+    }
+
+    int result = largestRectangleArea(heights, n);
+    printf("The largest rectangle area is: %d\n", result);
+
+    return 0;
+}
