@@ -1,0 +1,40 @@
+#Implementation 1
+
+
+def largest_rectangle_area(heights):
+    stack = []
+    max_area = 0
+    i = 0
+
+    while i < len(heights):
+        if not stack or heights[i] >= heights[stack[-1]]:
+            stack.append(i)
+            i += 1
+        else:
+            top_of_stack = stack.pop()
+            width = i if not stack else i - stack[-1] - 1
+            area = heights[top_of_stack] * width
+            max_area = max(max_area, area)
+
+    while stack:
+        top_of_stack = stack.pop()
+        width = i if not stack else len(heights) - stack[-1] - 1
+        area = heights[top_of_stack] * width
+        max_area = max(max_area, area)
+
+    return max_area
+
+# Example input
+input_data = '''7
+8 6 9 10 5 3 7'''
+
+# Splitting the input into lines and processing it
+input_lines = input_data.split('\n')
+n = int(input_lines[0])  # Number of input records
+heights = list(map(int, input_lines[1].split()))  # Heights of rectangles as a list
+
+# Calculate the largest rectangle area
+result = largest_rectangle_area(heights)
+
+# Output the largest rectangle area
+print(result) #about this problem output is 25 
