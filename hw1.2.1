@@ -1,0 +1,73 @@
+def count_mines(matrix, row, col):
+    count = 0
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+    for dr, dc in directions:
+        r, c = row + dr, col + dc
+        if 0 <= r < len(matrix) and 0 <= c < len(matrix[0]) and matrix[r][c] == '*':
+            count += 1
+    
+    return count
+
+def process_matrix(matrix):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == '0':
+                mines_count = count_mines(matrix, i, j)
+                matrix[i][j] = str(mines_count)
+
+def transpose_3x3(matrix, row, col):
+    if row + 2 >= len(matrix) or col + 2 >= len(matrix[0]):
+        return
+    
+    sub_matrix = [row[col:col+3] for row in matrix[row:row+3]]
+    transposed = [list(row) for row in zip(*sub_matrix)]
+    
+    for i in range(3):
+        for j in range(3):
+            matrix[row+i][col+j] = transposed[i][j]
+
+def check_mine_numbers(matrix):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == '0':
+                mines_count = count_mines(matrix, i, j)
+                if int(matrix[i][j]) != mines_count:
+                    return False
+    return True
+
+# Read input size
+n = int(input())
+data = []
+for _ in range(n):
+    row = input().strip().split()
+    data.append(row)
+
+# Step 1: Count mines around '0' and update the numbers
+process_matrix(data)
+
+# Step 2: Transpose 3x3 matrices centered at '@'
+def process_transpose(matrix):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == '@':
+                transpose_3x3(matrix, i - 1, j - 1)
+
+# Step 3: Check if mine numbers are correct after transposition
+process_transpose(data)
+
+# Print the resulting matrix twice
+for i in range(2):
+    for row in data:
+        print(' '.join(row))
+    if i == 0:
+        print()
+
+# Check if mine numbers are correct after transposition
+is_correct = check_mine_numbers(data)
+
+# Print result
+if is_correct:
+    print('Correct')
+else:
+    print('Wrong')
